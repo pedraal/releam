@@ -47,7 +47,7 @@ pub type ConventionalAttributes {
   ConventionalAttributes(
     commit_type: CommitType,
     scope: Option(String),
-    message: String,
+    description: String,
     body: List(String),
     footer: List(#(String, String)),
     breaking: Bool,
@@ -58,7 +58,7 @@ pub type ConventionalDefinition {
   ConventionalDefinition(
     commit_type: CommitType,
     scope: Option(String),
-    message: String,
+    description: String,
     breaking: Bool,
   )
 }
@@ -169,7 +169,7 @@ pub fn parse_conventional_attributes(message: String) {
         ConventionalAttributes(
           commit_type: cd.commit_type,
           scope: cd.scope,
-          message: cd.message,
+          description: cd.description,
           body: [],
           footer: [],
           breaking: cd.breaking,
@@ -184,7 +184,7 @@ pub fn parse_conventional_attributes(message: String) {
         ConventionalAttributes(
           commit_type: cd.commit_type,
           scope: cd.scope,
-          message: cd.message,
+          description: cd.description,
           body: cos.body,
           footer: cos.footer,
           breaking: cd.breaking || cos.breaking,
@@ -206,18 +206,18 @@ pub fn parse_conventional_definition(def: String) {
     |> list.map(string.trim(_))
 
   case attributes {
-    [commit_type, scope, message] ->
+    [commit_type, scope, description] ->
       Ok(ConventionalDefinition(
         commit_type: parse_conventional_commit_type(commit_type),
         scope: Some(scope),
-        message: message,
+        description: description,
         breaking: is_breaking,
       ))
-    [commit_type, message] ->
+    [commit_type, description] ->
       Ok(ConventionalDefinition(
         commit_type: parse_conventional_commit_type(commit_type),
         scope: None,
-        message: message,
+        description: description,
         breaking: is_breaking,
       ))
     _ -> Error(InvalidCommitDefinition)

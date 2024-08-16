@@ -121,7 +121,7 @@ pub fn parse_conventional_definition_test() {
     Ok(ConventionalDefinition(
       commit_type: Feat,
       scope: None,
-      message: "lorem ipsum",
+      description: "lorem ipsum",
       breaking: False,
     )),
   )
@@ -131,7 +131,7 @@ pub fn parse_conventional_definition_test() {
     Ok(ConventionalDefinition(
       commit_type: Feat,
       scope: Some("api"),
-      message: "lorem ipsum",
+      description: "lorem ipsum",
       breaking: False,
     )),
   )
@@ -141,7 +141,7 @@ pub fn parse_conventional_definition_test() {
     Ok(ConventionalDefinition(
       commit_type: Feat,
       scope: Some("api"),
-      message: "lorem ipsum",
+      description: "lorem ipsum",
       breaking: True,
     )),
   )
@@ -151,7 +151,7 @@ pub fn parse_conventional_definition_test() {
     Ok(ConventionalDefinition(
       commit_type: Feat,
       scope: None,
-      message: "lorem ipsum",
+      description: "lorem ipsum",
       breaking: True,
     )),
   )
@@ -161,7 +161,7 @@ pub fn parse_conventional_definition_test() {
     Ok(ConventionalDefinition(
       commit_type: Custom("foo"),
       scope: None,
-      message: "lorem ipsum",
+      description: "lorem ipsum",
       breaking: False,
     )),
   )
