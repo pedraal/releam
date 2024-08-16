@@ -11,109 +11,119 @@ pub fn main() {
   gleeunit.main()
 }
 
-// pub fn parse_conventional_attributes_simple_with_breaking_test() {
-//   "feat!: send an email to the customer when a product is shipped"
-//   |> releam.parse_conventional_attributes
-//   |> should.equal(releam.ConventionalAttributes(
-//     Some(Feat),
-//     None,
-//     "send an email to the customer when a product is shipped",
-//     None,
-//     None,
-//     True,
-//   ))
-// }
+pub fn parse_conventional_attributes_simple_with_breaking_test() {
+  "feat!: send an email to the customer when a product is shipped"
+  |> releam.parse_conventional_attributes
+  |> should.equal(
+    Ok(ConventionalAttributes(
+      Feat,
+      None,
+      "send an email to the customer when a product is shipped",
+      [],
+      [],
+      True,
+    )),
+  )
+}
 
-// pub fn parse_conventional_attributes_simple_with_scope_test() {
-//   "chore(deps): bump versions\n"
-//   |> releam.parse_conventional_attributes
-//   |> should.equal(ConventionalAttributes(
-//     Some(Chore),
-//     Some("deps"),
-//     "bump versions",
-//     None,
-//     None,
-//     False,
-//   ))
-// }
+pub fn parse_conventional_attributes_simple_with_scope_test() {
+  "chore(deps): bump versions\n"
+  |> releam.parse_conventional_attributes
+  |> should.equal(
+    Ok(ConventionalAttributes(
+      Chore,
+      Some("deps"),
+      "bump versions",
+      [],
+      [],
+      False,
+    )),
+  )
+}
 
-// pub fn parse_conventional_attributes_simple_with_scope_and_breaking_test() {
-//   "chore(deps)!: bump versions\n"
-//   |> releam.parse_conventional_attributes
-//   |> should.equal(ConventionalAttributes(
-//     Some(Chore),
-//     Some("deps"),
-//     "bump versions",
-//     None,
-//     None,
-//     True,
-//   ))
-// }
+pub fn parse_conventional_attributes_simple_with_scope_and_breaking_test() {
+  "chore(deps)!: bump versions\n"
+  |> releam.parse_conventional_attributes
+  |> should.equal(
+    Ok(ConventionalAttributes(
+      Chore,
+      Some("deps"),
+      "bump versions",
+      [],
+      [],
+      True,
+    )),
+  )
+}
 
-// pub fn parse_conventional_attributes_with_breaking_and_breaking_footer_test() {
-//   "feat(api)!: drop support for uids
+pub fn parse_conventional_attributes_with_breaking_and_breaking_footer_test() {
+  "feat(api)!: drop support for uids
 
-//   BREAKING CHANGE: drop support for queries using uids"
-//   |> releam.parse_conventional_attributes
-//   |> should.equal(ConventionalAttributes(
-//     Some(Feat),
-//     Some("api"),
-//     "drop support for uids",
-//     None,
-//     Some([#("BREAKING CHANGE", "drop support for queries using uids")]),
-//     True,
-//   ))
-// }
+  BREAKING CHANGE: drop support for queries using uids"
+  |> releam.parse_conventional_attributes
+  |> should.equal(
+    Ok(ConventionalAttributes(
+      Feat,
+      Some("api"),
+      "drop support for uids",
+      [],
+      [#("BREAKING CHANGE", "drop support for queries using uids")],
+      True,
+    )),
+  )
+}
 
-// pub fn parse_conventional_attributes_with_bodies_test() {
-//   "fix: prevent racing of requests
+pub fn parse_conventional_attributes_with_bodies_test() {
+  "fix: prevent racing of requests
 
-//   Introduce a request id and a reference to latest request. Dismiss
-//   incoming responses other than from latest request.
+  Introduce a request id and a reference to latest request. Dismiss
+  incoming responses other than from latest request.
 
-//   Remove timeouts which were used to mitigate the racing issue but are
-//   obsolete now.
-//   "
-//   |> releam.parse_conventional_attributes
-//   |> should.equal(ConventionalAttributes(
-//     Some(Fix),
-//     None,
-//     "prevent racing of requests",
-//     Some([
-//       "Introduce a request id and a reference to latest request. Dismiss\nincoming responses other than from latest request.",
-//       "Remove timeouts which were used to mitigate the racing issue but are\nobsolete now.",
-//     ]),
-//     None,
-//     False,
-//   ))
-// }
+  Remove timeouts which were used to mitigate the racing issue but are
+  obsolete now.
+  "
+  |> releam.parse_conventional_attributes
+  |> should.equal(
+    Ok(ConventionalAttributes(
+      Fix,
+      None,
+      "prevent racing of requests",
+      [
+        "Introduce a request id and a reference to latest request. Dismiss incoming responses other than from latest request.",
+        "Remove timeouts which were used to mitigate the racing issue but are obsolete now.",
+      ],
+      [],
+      False,
+    )),
+  )
+}
 
-// pub fn parse_conventional_attributes_with_body_and_footers_test() {
-//   "fix: prevent racing of requests
+pub fn parse_conventional_attributes_with_body_and_footers_test() {
+  "fix: prevent racing of requests
 
-//   Introduce a request id and a reference to latest request. Dismiss
-//   incoming responses other than from latest request.
+  Introduce a request id and a reference to latest request. Dismiss
+  incoming responses other than from latest request.
 
-//   Remove timeouts which were used to mitigate the racing issue but are
-//   obsolete now.
+  Remove timeouts which were used to mitigate the racing issue but are
+  obsolete now.
 
-//   Reviewed-by: Z
-//   Refs: #123"
-//   |> releam.parse_conventional_attributes
-//   |> should.equal(
-//     Ok(ConventionalAttributes(
-//       Fix,
-//       None,
-//       "prevent racing of requests",
-//       [
-//         "Introduce a request id and a reference to latest request. Dismiss\nincoming responses other than from latest request.",
-//         "Remove timeouts which were used to mitigate the racing issue but are\nobsolete now.",
-//       ],
-//       [#("Reviewed-by", "Z"), #("Refs", "#123")],
-//       False,
-//     )),
-//   )
-// }
+  Reviewed-by: Z
+  Refs: #123"
+  |> releam.parse_conventional_attributes
+  |> should.equal(
+    Ok(ConventionalAttributes(
+      Fix,
+      None,
+      "prevent racing of requests",
+      [
+        "Introduce a request id and a reference to latest request. Dismiss incoming responses other than from latest request.",
+        "Remove timeouts which were used to mitigate the racing issue but are obsolete now.",
+      ],
+      [#("Reviewed-by", "Z"), #("Refs", "#123")],
+      False,
+    )),
+  )
+}
 
 pub fn parse_conventional_definition_test() {
   releam.parse_conventional_definition("feat: lorem ipsum")
@@ -172,14 +182,15 @@ pub fn parse_conventional_definition_test() {
 
 pub fn parse_conventional_optional_sections_test() {
   [
-    "foo bar", "lorem ipsum",
+    "foo bar
+    baz", "lorem ipsum",
     "Reviewed-by: Z
     Refs: #123
     BREAKING CHANGE: drop json support",
   ]
   |> releam.parse_conventional_optional_sections
   |> should.equal(ConventionalOptionalSections(
-    body: ["foo bar", "lorem ipsum"],
+    body: ["foo bar baz", "lorem ipsum"],
     footer: [
       #("Reviewed-by", "Z"),
       #("Refs", "#123"),

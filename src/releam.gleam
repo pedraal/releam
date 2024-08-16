@@ -160,7 +160,6 @@ pub fn parse_conventional_attributes(message: String) {
     message
     |> string.split("\n\n")
     |> list.map(string.trim(_))
-    |> io.debug
 
   case sections {
     [def] -> {
@@ -242,13 +241,13 @@ pub fn parse_conventional_optional_sections(sections: List(String)) {
   case list.reverse(sections), footer {
     [_, ..body], Ok(f) ->
       ConventionalOptionalSections(
-        body: list.reverse(body),
+        body: list.reverse(body) |> clean_conventional_body,
         footer: f,
         breaking: is_breaking,
       )
     body, Error(_) ->
       ConventionalOptionalSections(
-        body: list.reverse(body),
+        body: list.reverse(body) |> clean_conventional_body,
         footer: [],
         breaking: is_breaking,
       )
@@ -292,6 +291,16 @@ pub fn parse_conventional_footer_line(line: String) {
     [key, value] -> Ok(#(key, value))
     _ -> Error(InvalidConventionalFooterLine)
   }
+}
+
+pub fn clean_conventional_body(lines: List(String)) {
+  lines
+  |> list.map(fn(line) {
+    line
+    |> string.split("\n")
+    |> list.map(string.trim(_))
+    |> string.join(" ")
+  })
 }
 
 pub fn parse_conventional_commit_type(commit_type: String) {
