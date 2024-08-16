@@ -18,10 +18,10 @@ pub type CommitType {
   Ci
   Chore
   Revert
+  Custom(String)
 }
 
 pub type ConventionalCommitParseError {
-  InvalidCommitType
   InvalidCommitDefinition
   InvalidCommitMessage
 }
@@ -50,7 +50,24 @@ pub type ConventionalAttributes {
     message: String,
     body: List(String),
     footer: List(#(String, String)),
-    breaking_change: Bool,
+    breaking: Bool,
+  )
+}
+
+pub type ConventionalDefinition {
+  ConventionalDefinition(
+    commit_type: CommitType,
+    scope: Option(String),
+    message: String,
+    breaking: Bool,
+  )
+}
+
+pub type ConventionalOptionalSections {
+  ConventionalOptionalSections(
+    body: List(String),
+    footer: List(#(String, String)),
+    breaking: Bool,
   )
 }
 
@@ -146,20 +163,31 @@ pub fn parse_conventional_attributes(message: String) {
     |> io.debug
 
   case sections {
-    [def] -> parse_conventional_definition(def)
+    [def] -> {
+      parse_conventional_definition(def)
+      |> result.map(fn(cd) {
+        ConventionalAttributes(
+          commit_type: cd.commit_type,
+          scope: cd.scope,
+          message: cd.message,
+          body: [],
+          footer: [],
+          breaking: cd.breaking,
+        )
+      })
+    }
     [def, ..rest] -> {
       parse_conventional_definition(def)
-      |> result.map(fn(conventional_attributes) {
-        let #(body, footer) = parse_conventional_optional_sections(rest)
-        let is_breaking_change =
-          list.any(footer, fn(item) { item.0 == "BREAKING CHANGE" })
+      |> result.map(fn(cd) {
+        let cos = parse_conventional_optional_sections(rest)
 
         ConventionalAttributes(
-          ..conventional_attributes,
-          body: body,
-          footer: footer,
-          breaking_change: conventional_attributes.breaking_change
-            || is_breaking_change,
+          commit_type: cd.commit_type,
+          scope: cd.scope,
+          message: cd.message,
+          body: cos.body,
+          footer: cos.footer,
+          breaking: cd.breaking || cos.breaking,
         )
       })
     }
@@ -168,7 +196,7 @@ pub fn parse_conventional_attributes(message: String) {
 }
 
 pub fn parse_conventional_definition(def: String) {
-  let is_breaking_change = string.contains(def, "!:")
+  let is_breaking = string.contains(def, "!:")
   let attributes =
     def
     |> string.replace(")", "")
@@ -179,29 +207,19 @@ pub fn parse_conventional_definition(def: String) {
 
   case attributes {
     [commit_type, scope, message] ->
-      parse_conventional_commit_type(commit_type)
-      |> result.map(fn(c_t) {
-        ConventionalAttributes(
-          commit_type: c_t,
-          scope: Some(scope),
-          message: message,
-          body: [],
-          footer: [],
-          breaking_change: is_breaking_change,
-        )
-      })
+      Ok(ConventionalDefinition(
+        commit_type: parse_conventional_commit_type(commit_type),
+        scope: Some(scope),
+        message: message,
+        breaking: is_breaking,
+      ))
     [commit_type, message] ->
-      parse_conventional_commit_type(commit_type)
-      |> result.map(fn(c_t) {
-        ConventionalAttributes(
-          commit_type: c_t,
-          scope: None,
-          message: message,
-          body: [],
-          footer: [],
-          breaking_change: is_breaking_change,
-        )
-      })
+      Ok(ConventionalDefinition(
+        commit_type: parse_conventional_commit_type(commit_type),
+        scope: None,
+        message: message,
+        breaking: is_breaking,
+      ))
     _ -> Error(InvalidCommitDefinition)
   }
 }
@@ -212,10 +230,30 @@ pub fn parse_conventional_optional_sections(sections: List(String)) {
     |> result.unwrap("")
     |> parse_conventional_footer
 
+  let is_breaking =
+    result.map(footer, fn(items) {
+      case list.key_find(items, "BREAKING CHANGE") {
+        Ok(_) -> True
+        Error(_) -> False
+      }
+    })
+    |> result.unwrap(False)
+
   case list.reverse(sections), footer {
-    [_, ..body], Ok(f) -> #(list.reverse(body), f)
-    body, Error(_) -> #(list.reverse(body), [])
-    _, _ -> #([], [])
+    [_, ..body], Ok(f) ->
+      ConventionalOptionalSections(
+        body: list.reverse(body),
+        footer: f,
+        breaking: is_breaking,
+      )
+    body, Error(_) ->
+      ConventionalOptionalSections(
+        body: list.reverse(body),
+        footer: [],
+        breaking: is_breaking,
+      )
+    _, _ ->
+      ConventionalOptionalSections(body: [], footer: [], breaking: is_breaking)
   }
 }
 
@@ -258,17 +296,17 @@ pub fn parse_conventional_footer_line(line: String) {
 
 pub fn parse_conventional_commit_type(commit_type: String) {
   case commit_type {
-    "feat" -> Ok(Feat)
-    "fix" -> Ok(Fix)
-    "docs" -> Ok(Docs)
-    "style" -> Ok(Style)
-    "refactor" | "refacto" -> Ok(Refactor)
-    "perf" -> Ok(Perf)
-    "test" | "tests" -> Ok(Test)
-    "build" -> Ok(Build)
-    "ci" -> Ok(Ci)
-    "chore" -> Ok(Chore)
-    "revert" -> Ok(Revert)
-    _ -> Error(InvalidCommitType)
+    "feat" -> Feat
+    "fix" -> Fix
+    "docs" -> Docs
+    "style" -> Style
+    "refactor" | "refacto" -> Refactor
+    "perf" -> Perf
+    "test" | "tests" -> Test
+    "build" -> Build
+    "ci" -> Ci
+    "chore" -> Chore
+    "revert" -> Revert
+    custom -> Custom(custom)
   }
 }

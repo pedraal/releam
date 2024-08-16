@@ -2,9 +2,9 @@ import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
 import releam.{
-  Build, Chore, Ci, ConventionalAttributes, Docs, Feat, Fix,
-  InvalidCommitDefinition, InvalidCommitType, InvalidConventionalFooter, Perf,
-  Refactor, Revert, Style, Test,
+  Build, Chore, Ci, ConventionalAttributes, ConventionalDefinition,
+  ConventionalOptionalSections, Custom, Docs, Feat, Fix, InvalidCommitDefinition,
+  InvalidConventionalFooter, Perf, Refactor, Revert, Style, Test,
 }
 
 pub fn main() {
@@ -118,54 +118,53 @@ pub fn main() {
 pub fn parse_conventional_definition_test() {
   releam.parse_conventional_definition("feat: lorem ipsum")
   |> should.equal(
-    Ok(ConventionalAttributes(
+    Ok(ConventionalDefinition(
       commit_type: Feat,
       scope: None,
       message: "lorem ipsum",
-      body: [],
-      footer: [],
-      breaking_change: False,
+      breaking: False,
     )),
   )
 
   releam.parse_conventional_definition("feat(api): lorem ipsum")
   |> should.equal(
-    Ok(ConventionalAttributes(
+    Ok(ConventionalDefinition(
       commit_type: Feat,
       scope: Some("api"),
       message: "lorem ipsum",
-      body: [],
-      footer: [],
-      breaking_change: False,
+      breaking: False,
     )),
   )
 
   releam.parse_conventional_definition("feat(api)!: lorem ipsum")
   |> should.equal(
-    Ok(ConventionalAttributes(
+    Ok(ConventionalDefinition(
       commit_type: Feat,
       scope: Some("api"),
       message: "lorem ipsum",
-      body: [],
-      footer: [],
-      breaking_change: True,
+      breaking: True,
     )),
   )
 
   releam.parse_conventional_definition("feat!: lorem ipsum")
   |> should.equal(
-    Ok(ConventionalAttributes(
+    Ok(ConventionalDefinition(
       commit_type: Feat,
       scope: None,
       message: "lorem ipsum",
-      body: [],
-      footer: [],
-      breaking_change: True,
+      breaking: True,
     )),
   )
 
   releam.parse_conventional_definition("foo: lorem ipsum")
-  |> should.equal(Error(InvalidCommitType))
+  |> should.equal(
+    Ok(ConventionalDefinition(
+      commit_type: Custom("foo"),
+      scope: None,
+      message: "lorem ipsum",
+      breaking: False,
+    )),
+  )
 
   releam.parse_conventional_definition("lorem ipsum")
   |> should.equal(Error(InvalidCommitDefinition))
@@ -175,18 +174,29 @@ pub fn parse_conventional_optional_sections_test() {
   [
     "foo bar", "lorem ipsum",
     "Reviewed-by: Z
-    Refs: #123",
+    Refs: #123
+    BREAKING CHANGE: drop json support",
   ]
   |> releam.parse_conventional_optional_sections
-  |> should.equal(
-    #(["foo bar", "lorem ipsum"], [#("Reviewed-by", "Z"), #("Refs", "#123")]),
-  )
+  |> should.equal(ConventionalOptionalSections(
+    body: ["foo bar", "lorem ipsum"],
+    footer: [
+      #("Reviewed-by", "Z"),
+      #("Refs", "#123"),
+      #("BREAKING CHANGE", "drop json support"),
+    ],
+    breaking: True,
+  ))
 }
 
 pub fn parse_conventional_optional_sections_with_invalid_footer_test() {
   ["foo bar", "lorem ipsum", "Reviewed by: Z"]
   |> releam.parse_conventional_optional_sections
-  |> should.equal(#(["foo bar", "lorem ipsum", "Reviewed by: Z"], []))
+  |> should.equal(ConventionalOptionalSections(
+    body: ["foo bar", "lorem ipsum", "Reviewed by: Z"],
+    footer: [],
+    breaking: False,
+  ))
 }
 
 pub fn parse_conventional_footer_test() {
@@ -213,41 +223,44 @@ pub fn parse_conventional_footer_with_invalid_test() {
 
 pub fn parse_conventional_commit_type_test() {
   releam.parse_conventional_commit_type("feat")
-  |> should.equal(Ok(Feat))
+  |> should.equal(Feat)
 
   releam.parse_conventional_commit_type("fix")
-  |> should.equal(Ok(Fix))
+  |> should.equal(Fix)
 
   releam.parse_conventional_commit_type("docs")
-  |> should.equal(Ok(Docs))
+  |> should.equal(Docs)
 
   releam.parse_conventional_commit_type("style")
-  |> should.equal(Ok(Style))
+  |> should.equal(Style)
 
   releam.parse_conventional_commit_type("refactor")
-  |> should.equal(Ok(Refactor))
+  |> should.equal(Refactor)
 
   releam.parse_conventional_commit_type("refacto")
-  |> should.equal(Ok(Refactor))
+  |> should.equal(Refactor)
 
   releam.parse_conventional_commit_type("perf")
-  |> should.equal(Ok(Perf))
+  |> should.equal(Perf)
 
   releam.parse_conventional_commit_type("test")
-  |> should.equal(Ok(Test))
+  |> should.equal(Test)
 
   releam.parse_conventional_commit_type("tests")
-  |> should.equal(Ok(Test))
+  |> should.equal(Test)
 
   releam.parse_conventional_commit_type("build")
-  |> should.equal(Ok(Build))
+  |> should.equal(Build)
 
   releam.parse_conventional_commit_type("ci")
-  |> should.equal(Ok(Ci))
+  |> should.equal(Ci)
 
   releam.parse_conventional_commit_type("chore")
-  |> should.equal(Ok(Chore))
+  |> should.equal(Chore)
 
   releam.parse_conventional_commit_type("revert")
-  |> should.equal(Ok(Revert))
+  |> should.equal(Revert)
+
+  releam.parse_conventional_commit_type("whatever")
+  |> should.equal(Custom("whatever"))
 }
