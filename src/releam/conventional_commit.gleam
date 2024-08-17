@@ -65,7 +65,8 @@ pub fn parse_attributes(message: String) {
 
   case sections {
     [def] -> {
-      parse_definition(def)
+      def
+      |> parse_definition
       |> result.map(fn(cd) {
         ConventionalAttributes(
           commit_type: cd.commit_type,
@@ -78,7 +79,8 @@ pub fn parse_attributes(message: String) {
       })
     }
     [def, ..rest] -> {
-      parse_definition(def)
+      def
+      |> parse_definition
       |> result.map(fn(cd) {
         let cos = parse_optional_sections(rest)
 
@@ -127,12 +129,14 @@ pub fn parse_definition(def: String) {
 
 pub fn parse_optional_sections(sections: List(String)) {
   let footer =
-    list.last(sections)
+    sections
+    |> list.last
     |> result.unwrap("")
     |> parse_footer
 
   let is_breaking =
-    result.map(footer, fn(items) {
+    footer
+    |> result.map(fn(items) {
       case list.key_find(items, "BREAKING CHANGE") {
         Ok(_) -> True
         Error(_) -> False
@@ -163,7 +167,8 @@ pub fn parse_footer(raw: String) {
   let assert Ok(breaking_change_footer_re) =
     regex.from_string("^BREAKING CHANGE:")
   let is_footer =
-    string.split(raw, "\n")
+    raw
+    |> string.split("\n")
     |> list.map(string.trim(_))
     |> list.all(fn(line) {
       regex.check(footer_re, line)

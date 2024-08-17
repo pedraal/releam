@@ -2,7 +2,10 @@ import gleam/io
 import gleam/list
 import gleam/result
 import gleam/string
-import releam/conventional_commit
+import releam/conventional_commit.{
+  type ConventionalAttributes, type ConventionalCommitParseError,
+  InvalidCommitDefinition,
+}
 import shellout
 
 pub type Commit {
@@ -11,8 +14,8 @@ pub type Commit {
     author: Author,
     date: String,
     conventional_attributes: Result(
-      conventional_commit.ConventionalAttributes,
-      conventional_commit.ConventionalCommitParseError,
+      ConventionalAttributes,
+      ConventionalCommitParseError,
     ),
   )
 }
@@ -52,13 +55,14 @@ pub fn get_commits_since_last_tag(tag: String) {
 }
 
 pub fn parse_commits(commits: List(String)) {
-  list.map(commits, parse_commit)
+  commits
+  |> list.map(parse_commit)
   |> list.filter(fn(res) { result.is_ok(res) })
   |> list.map(result.unwrap(_, Commit(
     hash: "",
     author: Author(name: "", email: ""),
     date: "",
-    conventional_attributes: Error(conventional_commit.InvalidCommitDefinition),
+    conventional_attributes: Error(InvalidCommitDefinition),
   )))
 }
 
@@ -85,7 +89,8 @@ pub fn parse_commit(raw: String) {
 
 pub fn parse_commit_author(raw: String) {
   let author_props =
-    string.replace(raw, "Author:", "")
+    raw
+    |> string.replace("Author:", "")
     |> string.trim
     |> string.replace(">", "")
     |> string.split(" <")
