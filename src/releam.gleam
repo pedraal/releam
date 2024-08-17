@@ -2,7 +2,7 @@ import gleam/io
 import gleam/list
 import gleam/result
 import gleam/string
-import releam/conventional_commit.{
+import releam/conventional_attributes.{
   type ConventionalAttributes, type ConventionalCommitParseError,
   InvalidCommitDefinition,
 }
@@ -73,6 +73,7 @@ pub fn parse_commit(raw: String) {
     |> string.split("\n")
     |> list.map(string.trim(_))
     |> list.filter(fn(str) { str != "" })
+    |> io.debug
   case commit_props {
     // [hash, author, date, message, ..bodies] -> {
     //   let conventional_attributes = parse_conventional_attributes(message)
