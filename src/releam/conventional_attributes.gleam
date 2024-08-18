@@ -6,13 +6,13 @@ import gleam/string
 
 pub type CommitType {
   Feat
-  Fix
-  Docs
-  Style
-  Refactor
   Perf
-  Test
+  Fix
+  Refactor
+  Docs
   Build
+  Style
+  Test
   Ci
   Chore
   Revert
