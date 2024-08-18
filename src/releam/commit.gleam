@@ -1,5 +1,6 @@
 import gleam/list
 import gleam/regex
+import gleam/result
 import gleam/string
 import releam/conventional_attributes.{type ConventionalAttributes}
 import releam/git
@@ -25,6 +26,9 @@ pub type Author {
 pub fn parse_list(commits: List(String)) {
   commits
   |> list.map(parse_one)
+  |> list.filter(result.is_ok(_))
+  |> result.all
+  |> result.unwrap([])
 }
 
 pub fn parse_one(raw: String) {

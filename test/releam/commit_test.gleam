@@ -88,7 +88,7 @@ pub fn parse_list_test() {
   [valid_commit_one, valid_commit_two, invalid_commit_one]
   |> commit.parse_list
   |> should.equal([
-    Ok(Commit(
+    Commit(
       hash: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       author: Author(name: "johndoe", email: "john@doe.com"),
       date: "Fri Aug 16 01:24:47 2024 +0200",
@@ -100,8 +100,8 @@ pub fn parse_list_test() {
         [#("Refs", "#123")],
         True,
       ),
-    )),
-    Ok(Commit(
+    ),
+    Commit(
       hash: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       author: Author(name: "janedoe", email: "jane@doe.com"),
       date: "Fri Aug 16 01:24:47 2024 +0200",
@@ -113,7 +113,6 @@ pub fn parse_list_test() {
         [],
         False,
       ),
-    )),
-    Error(commit.InvalidCommit(invalid_commit_one)),
+    ),
   ])
 }
