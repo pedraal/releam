@@ -1,3 +1,4 @@
+import gleam/dict
 import gleam/list
 import gleam/regex
 import gleam/result
@@ -21,6 +22,12 @@ pub type CommitParseError {
 
 pub type Author {
   Author(name: String, email: String)
+}
+
+pub fn group_by_commit_type(commits: List(Commit)) {
+  commits
+  |> list.group(fn(c) { c.conventional_attributes.commit_type })
+  |> dict.to_list
 }
 
 pub fn parse_list(commits: List(String)) {

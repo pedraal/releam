@@ -116,3 +116,43 @@ pub fn parse_list_test() {
     ),
   ])
 }
+
+pub fn group_by_commit_type_test() {
+  let gen_fake_commit = fn(ct: ca.CommitType) {
+    Commit(
+      "",
+      Author("johndoe", "john@doe.com"),
+      "",
+      conventional_attributes: ca.ConventionalAttributes(
+        ct,
+        None,
+        "lorem ipsum",
+        [],
+        [],
+        False,
+      ),
+    )
+  }
+
+  let feat_commit_one = gen_fake_commit(ca.Feat)
+  let feat_commit_two = gen_fake_commit(ca.Feat)
+  let fix_commit_one = gen_fake_commit(ca.Fix)
+  let fix_commit_two = gen_fake_commit(ca.Fix)
+  let fix_commit_three = gen_fake_commit(ca.Fix)
+  let perf_commit_one = gen_fake_commit(ca.Perf)
+
+  [
+    feat_commit_one,
+    feat_commit_two,
+    fix_commit_one,
+    fix_commit_two,
+    fix_commit_three,
+    perf_commit_one,
+  ]
+  |> commit.group_by_commit_type
+  |> should.equal([
+    #(ca.Feat, [feat_commit_one, feat_commit_two]),
+    #(ca.Fix, [fix_commit_one, fix_commit_two, fix_commit_three]),
+    #(ca.Perf, [perf_commit_one]),
+  ])
+}
