@@ -15,7 +15,6 @@ pub type CommitType {
   Test
   Ci
   Chore
-  Revert
   Custom(String)
 }
 
@@ -222,7 +221,6 @@ pub fn parse_commit_type(commit_type: String) {
     "build" -> Build
     "ci" -> Ci
     "chore" -> Chore
-    "revert" -> Revert
     custom -> Custom(custom)
   }
 }

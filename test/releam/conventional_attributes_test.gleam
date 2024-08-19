@@ -4,7 +4,7 @@ import gleeunit/should
 import releam/conventional_attributes.{
   Build, Chore, Ci, ConventionalAttributes, ConventionalDefinition,
   ConventionalOptionalSections, Custom, Docs, Feat, Fix, InvalidCommitDefinition,
-  InvalidConventionalFooter, Perf, Refactor, Revert, Style, Test,
+  InvalidConventionalFooter, Perf, Refactor, Style, Test,
 }
 
 pub fn main() {
@@ -268,9 +268,6 @@ pub fn parse_commit_type_test() {
 
   conventional_attributes.parse_commit_type("chore")
   |> should.equal(Chore)
-
-  conventional_attributes.parse_commit_type("revert")
-  |> should.equal(Revert)
 
   conventional_attributes.parse_commit_type("whatever")
   |> should.equal(Custom("whatever"))

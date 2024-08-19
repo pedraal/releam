@@ -5,7 +5,7 @@ import gleeunit/should
 import releam/commit.{Author, Commit}
 import releam/conventional_attributes.{
   type CommitType, Build, Chore, Ci, ConventionalAttributes, Custom, Docs, Feat,
-  Fix, Perf, Refactor, Revert, Style, Test,
+  Fix, Perf, Refactor, Style, Test,
 }
 import releam/semver.{Bump, Major, Minor, Patch}
 
@@ -39,7 +39,6 @@ pub fn commit_to_bump_type_test() {
     #(Test, None),
     #(Ci, None),
     #(Chore, None),
-    #(Revert, None),
     #(Custom("any"), None),
   ]
   |> list.each(fn(combination) {
