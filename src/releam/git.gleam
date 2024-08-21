@@ -2,18 +2,12 @@ import gleam/list
 import gleam/regex
 import gleam/result
 import gleam/string
-
+import releam/changelog
+import releam/commit_regex
 import shellout
 
-pub const git_log_commit_re = "^commit\\s([0-9a-f]{40})$\\n^Author:\\s(.+)\\s<(.+)>$\\n^Date:\\s+(.+)$\\n\\n((?:\\s{4}.+\\n?)+)(?:\\n?(?:\\s{4}.+\\n?)+)?$"
-
 pub fn get_last_tag() {
-  shellout.command(
-    run: "git",
-    with: ["describe", "--tags", "--abbrev=0"],
-    in: ".",
-    opt: [],
-  )
+  exec_git(["describe", "--tags", "--abbrev=0"])
   |> result.unwrap("")
   |> string.replace("\n", "")
 }
@@ -26,14 +20,21 @@ pub fn get_commits_since_last_tag(tag: String) {
 
   let assert Ok(re) =
     regex.compile(
-      git_log_commit_re,
+      commit_regex.git_log_commit_re,
       regex.Options(case_insensitive: False, multi_line: True),
     )
 
-  let output =
-    shellout.command(run: "git", with: ["log", reference], in: ".", opt: [])
-    |> result.unwrap("")
+  let output = exec_git(["log", reference]) |> result.unwrap("")
 
-  regex.scan(re, output)
-  |> list.map(fn(m) { m.content })
+  regex.scan(re, output) |> list.map(fn(m) { m.content })
+}
+
+pub fn commit_release(new_tag: String) {
+  let assert Ok(_) = exec_git(["add", changelog.changelog_file_path])
+  let assert Ok(_) = exec_git(["commit", "-m", "chore(release): " <> new_tag])
+  let assert Ok(_) = exec_git(["tag", "-am", new_tag, new_tag])
+}
+
+pub fn exec_git(args: List(String)) {
+  shellout.command(run: "git", with: args, in: ".", opt: [])
 }

@@ -56,6 +56,7 @@ pub fn parse_one_test() {
   |> should.equal(
     Ok(Commit(
       hash: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      short_hash: "aaaaaaa",
       author: Author(name: "johndoe", email: "john@doe.com"),
       date: "Fri Aug 16 01:24:47 2024 +0200",
       conventional_attributes: ca.ConventionalAttributes(
@@ -90,6 +91,7 @@ pub fn parse_list_test() {
   |> should.equal([
     Commit(
       hash: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      short_hash: "aaaaaaa",
       author: Author(name: "johndoe", email: "john@doe.com"),
       date: "Fri Aug 16 01:24:47 2024 +0200",
       conventional_attributes: ca.ConventionalAttributes(
@@ -103,6 +105,7 @@ pub fn parse_list_test() {
     ),
     Commit(
       hash: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      short_hash: "bbbbbbb",
       author: Author(name: "janedoe", email: "jane@doe.com"),
       date: "Fri Aug 16 01:24:47 2024 +0200",
       conventional_attributes: ca.ConventionalAttributes(
@@ -118,11 +121,12 @@ pub fn parse_list_test() {
 }
 
 pub fn group_by_commit_type_test() {
-  let gen_fake_commit = fn(ct: ca.CommitType) {
+  let gen_commit = fn(ct: ca.CommitType) {
     Commit(
-      "",
-      Author("johndoe", "john@doe.com"),
-      "",
+      hash: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      short_hash: "aaaaaaa",
+      author: Author(name: "johndoe", email: "john@doe.com"),
+      date: "Fri Aug 16 01:24:47 2024 +0200",
       conventional_attributes: ca.ConventionalAttributes(
         ct,
         None,
@@ -134,12 +138,12 @@ pub fn group_by_commit_type_test() {
     )
   }
 
-  let feat_commit_one = gen_fake_commit(ca.Feat)
-  let feat_commit_two = gen_fake_commit(ca.Feat)
-  let fix_commit_one = gen_fake_commit(ca.Fix)
-  let fix_commit_two = gen_fake_commit(ca.Fix)
-  let fix_commit_three = gen_fake_commit(ca.Fix)
-  let perf_commit_one = gen_fake_commit(ca.Perf)
+  let feat_commit_one = gen_commit(ca.Feat)
+  let feat_commit_two = gen_commit(ca.Feat)
+  let fix_commit_one = gen_commit(ca.Fix)
+  let fix_commit_two = gen_commit(ca.Fix)
+  let fix_commit_three = gen_commit(ca.Fix)
+  let perf_commit_one = gen_commit(ca.Perf)
 
   [
     feat_commit_one,
@@ -152,7 +156,7 @@ pub fn group_by_commit_type_test() {
   |> commit.group_by_commit_type
   |> should.equal([
     #(ca.Feat, [feat_commit_one, feat_commit_two]),
-    #(ca.Fix, [fix_commit_one, fix_commit_two, fix_commit_three]),
     #(ca.Perf, [perf_commit_one]),
+    #(ca.Fix, [fix_commit_one, fix_commit_two, fix_commit_three]),
   ])
 }
