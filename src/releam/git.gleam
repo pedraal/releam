@@ -30,9 +30,11 @@ pub fn get_commits_since_last_tag(tag: String) {
 }
 
 pub fn commit_release(new_tag: String) {
-  let assert Ok(_) = exec_git(["add", changelog.changelog_file_path])
+  let assert Ok(_) =
+    exec_git(["add", changelog.changelog_file_path, "gleam.toml"])
   let assert Ok(_) = exec_git(["commit", "-m", "chore(release): " <> new_tag])
   let assert Ok(_) = exec_git(["tag", "-am", new_tag, new_tag])
+  let assert Ok(_) = exec_git(["push", "--follow-tags"])
 }
 
 pub fn exec_git(args: List(String)) {

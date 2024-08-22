@@ -1,4 +1,3 @@
-import gleam/io
 import gleam/option.{None, Some}
 import gleamsver as gs
 import releam/changelog
@@ -42,9 +41,8 @@ pub fn main() {
 
   let assert Ok(_) = changelog.write_to_changelog_file(new_changelog)
 
-  // let assert Ok(_) = git.commit_release(new_tag)
+  let new_config = package_config.replace_version(raw_config, new_version)
+  let assert Ok(_) = simplifile.write("gleam.toml", new_config)
 
-  io.println("Changelog:")
-  changelog.render(new_changelog, False)
-  |> io.debug
+  let assert Ok(_) = git.commit_release(new_tag)
 }
