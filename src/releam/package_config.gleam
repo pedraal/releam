@@ -1,4 +1,5 @@
 import gleam/dict
+import gleam/regex
 import gleam/result
 import gleamsver.{type SemVer}
 import tom
@@ -49,4 +50,13 @@ pub fn parse(raw: String) {
   }
 
   PackageConfig(version, repository)
+}
+
+pub fn replace_version(raw_config: String, new_version: gleamsver.SemVer) {
+  let assert Ok(version_re) = regex.from_string("version\\s*=\\s*\"(.+)\"")
+  regex.replace(
+    version_re,
+    raw_config,
+    "version = \"" <> gleamsver.to_string(new_version) <> "\"",
+  )
 }

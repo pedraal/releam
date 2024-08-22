@@ -36,3 +36,17 @@ pub fn parse_invalid_test() {
   |> pc.parse
   |> should.equal(pc.PackageConfig(gs.SemVer(0, 0, 0, "", ""), Error(Nil)))
 }
+
+pub fn replace_version_test() {
+  "
+version = \"0.0.0\"
+repository = { type = \"gitlab\", user = \"johndoe\", repo = \"leftpad\" }
+"
+  |> pc.replace_version(gs.SemVer(1, 2, 4, "", ""))
+  |> should.equal(
+    "
+version = \"1.2.4\"
+repository = { type = \"gitlab\", user = \"johndoe\", repo = \"leftpad\" }
+",
+  )
+}
