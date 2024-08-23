@@ -1,9 +1,11 @@
+import gleam/io
 import gleam/option.{None, Some}
 import gleamsver as gs
 import releam/changelog
 import releam/commit
 import releam/git
 import releam/package_config
+import releam/release
 import releam/semver
 import simplifile
 
@@ -45,4 +47,14 @@ pub fn main() {
   let assert Ok(_) = simplifile.write("gleam.toml", new_config)
 
   let assert Ok(_) = git.commit_release(new_tag)
+
+  let release_link =
+    release.generate_repository_provider_release_link(package, new_changelog)
+  case release_link {
+    Ok(rl) -> {
+      io.println("Click on the following link to create a new release")
+      io.println(rl)
+    }
+    _ -> Nil
+  }
 }
