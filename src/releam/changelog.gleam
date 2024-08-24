@@ -95,7 +95,7 @@ fn generate_compare_link(
 ) {
   case package_config.repository {
     Ok(repo) ->
-      case repo.provider {
+      case repo.host {
         Github -> {
           case config.previous_tag {
             "" -> {

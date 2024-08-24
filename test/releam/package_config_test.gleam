@@ -22,7 +22,7 @@ auto_push = true
   ))
 }
 
-pub fn parse_unsupported_repository_provider_test() {
+pub fn parse_unsupported_repository_host_test() {
   "
 version = \"1.2.3\"
 repository = { type = \"gitlab\", user = \"johndoe\", repo = \"leftpad\" }

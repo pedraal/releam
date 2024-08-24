@@ -44,6 +44,6 @@ pub fn commit_release(new_tag: String, push push: Bool) {
   }
 }
 
-pub fn exec_git(args: List(String)) {
+fn exec_git(args: List(String)) {
   shellout.command(run: "git", with: args, in: ".", opt: [])
 }

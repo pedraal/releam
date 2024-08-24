@@ -4,13 +4,13 @@ import gleam/result
 import gleamsver.{type SemVer}
 import tom
 
-pub type RepositoryProvider {
+pub type RepositoryHost {
   Github
   NotImplemented(String)
 }
 
 pub type Repository {
-  Repository(provider: RepositoryProvider, org: String, name: String)
+  Repository(host: RepositoryHost, org: String, name: String)
 }
 
 pub type PackageConfig {
@@ -21,8 +21,8 @@ pub type PackageConfig {
   )
 }
 
-pub fn parse(raw: String) {
-  let assert Ok(config) = tom.parse(raw)
+pub fn parse(raw_config: String) {
+  let assert Ok(config) = tom.parse(raw_config)
 
   let raw_version =
     tom.get_string(config, ["version"]) |> result.unwrap("0.0.0")
@@ -35,7 +35,7 @@ pub fn parse(raw: String) {
     |> tom.get_table(["repository"])
     |> result.unwrap(dict.new())
 
-  let repository_provider =
+  let repository_host =
     repository_config
     |> tom.get_string(["type"])
     |> result.map(fn(repo_type) {
@@ -48,7 +48,7 @@ pub fn parse(raw: String) {
   let repository_org = repository_config |> tom.get_string(["user"])
   let repository_name = repository_config |> tom.get_string(["repo"])
 
-  let repository = case repository_provider, repository_org, repository_name {
+  let repository = case repository_host, repository_org, repository_name {
     Ok(rp), Ok(ro), Ok(rn) -> Ok(Repository(rp, ro, rn))
     _, _, _ -> Error(Nil)
   }

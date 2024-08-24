@@ -43,11 +43,11 @@ pub fn commit_to_bump_type_test() {
   ]
   |> list.each(fn(combination) {
     gen_commit(combination.0, True)
-    |> semver.commit_to_bump_type
+    |> semver.define_commit_bump_type
     |> should.equal(Some(Major))
 
     gen_commit(combination.0, False)
-    |> semver.commit_to_bump_type
+    |> semver.define_commit_bump_type
     |> should.equal(combination.1)
   })
 }

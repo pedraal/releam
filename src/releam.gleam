@@ -51,9 +51,7 @@ pub fn main() {
 
   git.commit_release(new_tag, push: config.auto_push)
 
-  case
-    release.generate_repository_provider_release_link(config, new_changelog)
-  {
+  case release.generate_repository_host_release_link(config, new_changelog) {
     Ok(rl) -> {
       io.println("Click on the following link to create a new release")
       io.println(rl)

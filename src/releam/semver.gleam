@@ -26,13 +26,13 @@ fn define_bump_type_loop(commits: List(Commit), bump: Bump) {
     [current, ..rest] ->
       define_bump_type_loop(
         rest,
-        update_bump(bump, commit_to_bump_type(current)),
+        update_bump(bump, define_commit_bump_type(current)),
       )
     [] -> bump
   }
 }
 
-pub fn commit_to_bump_type(current: Commit) {
+pub fn define_commit_bump_type(current: Commit) {
   case
     current.conventional_attributes.commit_type,
     current.conventional_attributes.breaking

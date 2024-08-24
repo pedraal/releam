@@ -146,13 +146,13 @@ pub fn parse_optional_sections(sections: List(String)) {
   case list.reverse(sections), footer {
     [_, ..body], Ok(f) ->
       ConventionalOptionalSections(
-        body: list.reverse(body) |> clean_conventional_body,
+        body: list.reverse(body) |> clean_body,
         footer: f,
         breaking: is_breaking,
       )
     body, Error(_) ->
       ConventionalOptionalSections(
-        body: list.reverse(body) |> clean_conventional_body,
+        body: list.reverse(body) |> clean_body,
         footer: [],
         breaking: is_breaking,
       )
@@ -192,14 +192,14 @@ pub fn parse_footer(raw: String) {
   }
 }
 
-pub fn parse_footer_line(line: String) {
+fn parse_footer_line(line: String) {
   case string.split(line, ":") |> list.map(string.trim(_)) {
     [key, value] -> Ok(#(key, value))
     _ -> Error(InvalidConventionalFooterLine)
   }
 }
 
-pub fn clean_conventional_body(lines: List(String)) {
+fn clean_body(lines: List(String)) {
   lines
   |> list.map(fn(line) {
     line

@@ -7,8 +7,8 @@ pub fn generate_repository_provider_release_link(
   new_changelog: Changelog,
 ) {
   case package_config.repository {
-    Ok(Repository(provider, org, name)) -> {
-      case provider {
+    Ok(Repository(host, org, name)) -> {
+      case host {
         Github ->
           Ok(
             "https://github.com/"

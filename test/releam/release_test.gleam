@@ -12,7 +12,7 @@ pub fn main() {
   gleeunit.main()
 }
 
-pub fn generate_repository_provider_release_link_test() {
+pub fn generate_repository_host_release_link_test() {
   let package_config =
     pc.PackageConfig(
       gs.SemVer(1, 0, 0, "", ""),
@@ -29,7 +29,7 @@ pub fn generate_repository_provider_release_link_test() {
       ]),
     ])
 
-  release.generate_repository_provider_release_link(package_config, changelog)
+  release.generate_repository_host_release_link(package_config, changelog)
   |> should.equal(Ok(
     "https://github.com/johndoe/blog/releases/new?tag=v1.1.0&title=v1.1.0&body=%5Bcompare%20changes%5D(https%3A%2F%2Fgithub.com%2Fjohndoe%2Fblog%2Fcompare%2Fv1.0.0...v1.1.0)%0A%0A%23%23%23%20%F0%9F%9A%80%20Enhancements%0A%0A-%20**posts**%3A%20Add%20index%20endpoint",
   ))
