@@ -16,6 +16,7 @@ pub fn new_with_repository_test() {
     pc.PackageConfig(
       gs.SemVer(1, 0, 0, "", ""),
       Ok(pc.Repository(pc.Github, "johndoe", "blog")),
+      False,
     )
   let changelog_config = cl.ChangelogConfig("v1.0.0", "v1.1.0")
 
@@ -48,6 +49,7 @@ pub fn new_without_repository_test() {
     pc.PackageConfig(
       gs.SemVer(1, 0, 0, "", ""),
       Ok(pc.Repository(pc.NotImplemented(""), "johndoe", "blog")),
+      False,
     )
   let changelog_config = cl.ChangelogConfig("v1.0.0", "v1.1.0")
 

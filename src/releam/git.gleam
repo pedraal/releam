@@ -29,12 +29,19 @@ pub fn get_commits_since_last_tag(tag: String) {
   regex.scan(re, output) |> list.map(fn(m) { m.content })
 }
 
-pub fn commit_release(new_tag: String) {
+pub fn commit_release(new_tag: String, push push: Bool) {
   let assert Ok(_) =
     exec_git(["add", changelog.changelog_file_path, "gleam.toml"])
   let assert Ok(_) = exec_git(["commit", "-m", "chore(release): " <> new_tag])
   let assert Ok(_) = exec_git(["tag", "-am", new_tag, new_tag])
-  let assert Ok(_) = exec_git(["push", "--follow-tags"])
+
+  case push {
+    True -> {
+      let assert Ok(_) = exec_git(["push", "--follow-tags"])
+      Nil
+    }
+    _ -> Nil
+  }
 }
 
 pub fn exec_git(args: List(String)) {

@@ -14,7 +14,11 @@ pub type Repository {
 }
 
 pub type PackageConfig {
-  PackageConfig(version: SemVer, repository: Result(Repository, Nil))
+  PackageConfig(
+    version: SemVer,
+    repository: Result(Repository, Nil),
+    auto_push: Bool,
+  )
 }
 
 pub fn parse(raw: String) {
@@ -49,7 +53,12 @@ pub fn parse(raw: String) {
     _, _, _ -> Error(Nil)
   }
 
-  PackageConfig(version, repository)
+  let auto_push = case config |> tom.get_bool(["releam", "auto_push"]) {
+    Ok(v) -> v
+    _ -> False
+  }
+
+  PackageConfig(version, repository, auto_push)
 }
 
 pub fn replace_version(raw_config: String, new_version: gleamsver.SemVer) {

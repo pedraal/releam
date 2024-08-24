@@ -17,6 +17,7 @@ pub fn generate_repository_provider_release_link_test() {
     pc.PackageConfig(
       gs.SemVer(1, 0, 0, "", ""),
       Ok(pc.Repository(pc.Github, "johndoe", "blog")),
+      False,
     )
 
   let compare_url = "https://github.com/johndoe/blog/compare/v1.0.0...v1.1.0"

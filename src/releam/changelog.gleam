@@ -46,7 +46,7 @@ pub fn new(
   )
 }
 
-pub fn render(changelog: Changelog, with_title: Bool) {
+pub fn render(changelog: Changelog, with_title with_title: Bool) {
   bool.guard(with_title, render_title(changelog.title), fn() { "" })
   <> render_compare_link(changelog.compare_link)
   <> {
@@ -71,7 +71,7 @@ pub fn write_to_changelog_file(changelog: Changelog) {
     string.replace(
       content,
       insert_area,
-      insert_area <> render(changelog, True) <> "\n\n",
+      insert_area <> render(changelog, with_title: True) <> "\n\n",
     )
 
   case string.contains(content, changelog.title) {
