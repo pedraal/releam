@@ -2,6 +2,15 @@
 
 <!-- RELEAM TAG: DON'T DELETE -->
 
+## v0.2.0
+
+[compare changes](https://github.com/pedraal/releam/compare/v0.1.0...v0.2.0)
+
+### 🚀 Enhancements
+
+- Release link
+- **config**: Configurable git auto push behavior
+
 ## v0.1.0
 
 [compare changes](https://github.com/pedraal/releam/compare/73af227...v0.1.0)
