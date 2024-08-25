@@ -2,6 +2,14 @@
 
 <!-- RELEAM TAG: DON'T DELETE -->
 
+## v0.3.1
+
+[compare changes](https://github.com/pedraal/releam/compare/v0.2.1...v0.3.1)
+
+### 🚀 Enhancements
+
+- **cli**: Add push, major, minor and patch flags
+
 ## v0.2.1
 
 [compare changes](https://github.com/pedraal/releam/compare/v0.2.0...v0.2.1)

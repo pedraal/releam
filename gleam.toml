@@ -1,5 +1,5 @@
 name = "releam"
-version = "0.2.1"
+version = "0.3.1"
 
 description = "Releam is an opinionated gleam release and changelog generation tool based on conventional commit"
 licences = ["Apache-2.0"]
