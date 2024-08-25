@@ -2,6 +2,7 @@ import gleam/dict
 import gleam/regex
 import gleam/result
 import gleamsver.{type SemVer}
+import snag
 import tom
 
 pub type RepositoryHost {
@@ -21,8 +22,12 @@ pub type PackageConfig {
   )
 }
 
+pub type Overrides {
+  Overrides(auto_push: Result(Bool, snag.Snag))
+}
+
 /// Parses the content of a gleam.toml to return a PackageConfig
-pub fn parse(raw_config: String) {
+pub fn parse(raw_config: String, overrides: Overrides) {
   let assert Ok(config) = tom.parse(raw_config)
 
   let raw_version =
@@ -57,6 +62,11 @@ pub fn parse(raw_config: String) {
   let auto_push = case config |> tom.get_bool(["releam", "auto_push"]) {
     Ok(v) -> v
     _ -> False
+  }
+
+  let auto_push = case overrides.auto_push {
+    Ok(v) -> v
+    _ -> auto_push
   }
 
   PackageConfig(version, repository, auto_push)

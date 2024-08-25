@@ -1,6 +1,8 @@
+import argv
 import gleam/io
 import gleam/option.{None, Some}
 import gleamsver as gs
+import glint
 import releam/changelog
 import releam/commit
 import releam/git
@@ -10,6 +12,44 @@ import releam/semver
 import simplifile
 
 pub fn main() {
+  glint.new()
+  |> glint.with_name("releam")
+  |> glint.pretty_help(glint.default_pretty_help())
+  |> glint.add(at: [], do: release())
+  |> glint.run(argv.load().arguments)
+}
+
+fn push_flag() -> glint.Flag(Bool) {
+  glint.bool_flag("push")
+  |> glint.flag_help("Automatically push git commit and tag")
+}
+
+fn major_flag() -> glint.Flag(Bool) {
+  glint.bool_flag("major")
+  |> glint.flag_help("Force a major release")
+}
+
+fn minor_flag() -> glint.Flag(Bool) {
+  glint.bool_flag("minor")
+  |> glint.flag_help("Force a minor release")
+}
+
+fn patch_flag() -> glint.Flag(Bool) {
+  glint.bool_flag("patch")
+  |> glint.flag_help("Force a patch release")
+}
+
+fn release() {
+  use <- glint.command_help("Generate a new release")
+
+  use push <- glint.flag(push_flag())
+
+  use major <- glint.flag(major_flag())
+  use minor <- glint.flag(minor_flag())
+  use patch <- glint.flag(patch_flag())
+
+  use _, _, flags <- glint.command()
+
   let current_tag = git.get_last_tag()
 
   let commits =
@@ -18,9 +58,18 @@ pub fn main() {
     |> commit.parse_list
 
   let assert Ok(raw_config) = simplifile.read("gleam.toml")
-  let config = package_config.parse(raw_config)
+  let config =
+    package_config.parse(
+      raw_config,
+      package_config.Overrides(auto_push: push(flags)),
+    )
 
-  let bump_type = semver.define_bump_type(commits)
+  let bump_type = case major(flags), minor(flags), patch(flags) {
+    Ok(True), _, _ -> Some(semver.Major)
+    _, Ok(True), _ -> Some(semver.Minor)
+    _, _, Ok(True) -> Some(semver.Patch)
+    _, _, _ -> semver.define_bump_type(commits)
+  }
 
   let new_version = case bump_type {
     Some(semver.Major) ->

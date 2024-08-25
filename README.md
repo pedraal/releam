@@ -16,7 +16,7 @@ gleam add --dev releam
 ## Usage
 Once you are ready to create a new release from your main git branch, run the following :
 ```sh
-gleam run -m releam
+gleam run -m releam [-- FLAGS]
 ```
 It will :
 - parse the new commits since the last git tag
@@ -25,6 +25,9 @@ It will :
 - prepend the changelog to your `CHANGELOG.md` (if it's missing it will create it)
 - create a release commit and a new tag
 - if your repository host is supported, it will print a link to your terminal to create a new release (currently only github is supported)
+
+To force a bump type, you can use `--major`, `--minor`, and `--patch` flags.
+You can also push git release commit and new tag automatically with the `--push` flag.
 
 If you have specific requirements, this package exposes all its internal function for you to build your custom release script.
 
