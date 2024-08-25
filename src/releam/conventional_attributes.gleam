@@ -56,6 +56,7 @@ pub type ConventionalOptionalSections {
   )
 }
 
+/// Parses a commit message to a ConventionalAttributes record
 pub fn parse_attributes(message: String) {
   let sections =
     message
@@ -97,6 +98,8 @@ pub fn parse_attributes(message: String) {
   }
 }
 
+/// Parses the first line of commit message to extract
+/// commit type, scope and description
 pub fn parse_definition(def: String) {
   let is_breaking = string.contains(def, "!:")
   let attributes =
@@ -126,6 +129,8 @@ pub fn parse_definition(def: String) {
   }
 }
 
+/// Parses the optional lines of a commit message to extract body and footer.
+/// The list must not include the first line of a commit message
 pub fn parse_optional_sections(sections: List(String)) {
   let footer =
     sections
@@ -161,6 +166,7 @@ pub fn parse_optional_sections(sections: List(String)) {
   }
 }
 
+/// Parses a commit message footer to a dict
 pub fn parse_footer(raw: String) {
   let assert Ok(footer_re) = regex.from_string("^[a-zA-Z0-9-]+:")
   let assert Ok(breaking_change_footer_re) =

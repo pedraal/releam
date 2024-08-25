@@ -21,6 +21,7 @@ pub type PackageConfig {
   )
 }
 
+/// Parses the content of a gleam.toml to return a PackageConfig
 pub fn parse(raw_config: String) {
   let assert Ok(config) = tom.parse(raw_config)
 
@@ -61,6 +62,7 @@ pub fn parse(raw_config: String) {
   PackageConfig(version, repository, auto_push)
 }
 
+/// Replace the package version in a gleam.toml content
 pub fn replace_version(raw_config: String, new_version: gleamsver.SemVer) {
   let assert Ok(version_re) = regex.from_string("version\\s*=\\s*\"(.+)\"")
   regex.replace(

@@ -12,6 +12,7 @@ pub type Bump {
   Bump(major: Bool, minor: Bool, patch: Bool)
 }
 
+/// Defines a semver bump type from a list of commits
 pub fn define_bump_type(commits: List(Commit)) {
   case define_bump_type_loop(commits, Bump(False, False, False)) {
     Bump(True, _, _) -> Some(Major)
@@ -32,6 +33,7 @@ fn define_bump_type_loop(commits: List(Commit), bump: Bump) {
   }
 }
 
+/// Defines a semver bump type according to the commit type
 pub fn define_commit_bump_type(current: Commit) {
   case
     current.conventional_attributes.commit_type,

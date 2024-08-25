@@ -28,6 +28,7 @@ pub const changelog_file_path = "./CHANGELOG.md"
 
 const insert_area = "<!-- RELEAM TAG: DON'T DELETE -->\n\n"
 
+/// Generate a Changelog record
 pub fn new(
   package_config: PackageConfig,
   config: ChangelogConfig,
@@ -46,6 +47,7 @@ pub fn new(
   )
 }
 
+/// Renders a changelog to markdown
 pub fn render(changelog: Changelog, with_title with_title: Bool) {
   bool.guard(with_title, render_title(changelog.title), fn() { "" })
   <> render_compare_link(changelog.compare_link)
@@ -59,6 +61,8 @@ pub fn render(changelog: Changelog, with_title with_title: Bool) {
   }
 }
 
+/// Renders a changelog and inject it to the CHANGELOG.md file.
+/// If the file does not exists yet, it will create it.
 pub fn write_to_changelog_file(changelog: Changelog) {
   let assert Ok(_) = case simplifile.is_file(changelog_file_path) {
     Error(_) | Ok(False) -> init_changelog_file()
@@ -82,12 +86,17 @@ pub fn write_to_changelog_file(changelog: Changelog) {
   }
 }
 
+/// Creates a CHANGELOG.md file with a title and the insert area comment.
+/// Insert area comment is used by releam to inject new releases changelogs
+/// after the title and before the previous release changelog
 pub fn init_changelog_file() {
   let assert Ok(_) = simplifile.create_file(changelog_file_path)
   let assert Ok(_) =
     simplifile.append(changelog_file_path, "# Changelog\n\n" <> insert_area)
 }
 
+/// Generates a link to see the list of commits for the new version
+/// if repository host is supported
 fn generate_compare_link(
   package_config: PackageConfig,
   config: ChangelogConfig,
@@ -121,10 +130,12 @@ fn generate_compare_link(
   }
 }
 
+/// Renders changelog's title to markdown
 fn render_title(title: String) {
   "## " <> title <> "\n\n"
 }
 
+/// Renders changelog's compare link to markdown
 fn render_compare_link(link: Result(String, Nil)) {
   case link {
     Ok(l) -> "[compare changes](" <> l <> ")\n\n"
@@ -132,6 +143,7 @@ fn render_compare_link(link: Result(String, Nil)) {
   }
 }
 
+/// Renders a commit type header to markdown
 fn render_commit_type_header(commit_type: CommitType) {
   "### "
   <> case commit_type {
@@ -149,6 +161,7 @@ fn render_commit_type_header(commit_type: CommitType) {
   }
 }
 
+/// Renders a commit to markdown as a list item
 pub fn render_commit(commit: Commit) {
   let scope = case commit.conventional_attributes.scope {
     Some(scope) -> "**" <> scope <> "**: "

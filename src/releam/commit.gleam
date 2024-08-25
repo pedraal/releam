@@ -28,6 +28,7 @@ pub type Author {
   Author(name: String, email: String)
 }
 
+/// Groups commits by their conventional commit type
 pub fn group_by_commit_type(commits: List(Commit)) {
   let sorter = fn(ct: CommitType) {
     case ct {
@@ -53,6 +54,7 @@ pub fn group_by_commit_type(commits: List(Commit)) {
   })
 }
 
+/// Parses a list of commits from the `git log` output to a list of Commit records
 pub fn parse_list(commits: List(String)) {
   commits
   |> list.map(parse_one)
@@ -61,6 +63,7 @@ pub fn parse_list(commits: List(String)) {
   |> result.unwrap([])
 }
 
+/// Parses a string commit from the `git log` output to a Commit record
 pub fn parse_one(raw: String) {
   let assert Ok(commit_re) =
     regex.compile(

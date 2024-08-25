@@ -6,12 +6,14 @@ import releam/changelog
 import releam/commit_regex
 import shellout
 
+/// Gets the last tag of the repository
 pub fn get_last_tag() {
   exec_git(["describe", "--tags", "--abbrev=0"])
   |> result.unwrap("")
   |> string.replace("\n", "")
 }
 
+/// Gets all commits since the last tag of the repository
 pub fn get_commits_since_last_tag(tag: String) {
   let reference = case tag {
     "" -> "HEAD"
@@ -29,6 +31,9 @@ pub fn get_commits_since_last_tag(tag: String) {
   regex.scan(re, output) |> list.map(fn(m) { m.content })
 }
 
+/// Creates a release commit containing the CHANGELOG.md file and the gleam.toml
+/// with bumped version, creates the new tag and optionaly push to the git
+/// repository
 pub fn commit_release(new_tag: String, push push: Bool) {
   let assert Ok(_) =
     exec_git(["add", changelog.changelog_file_path, "gleam.toml"])

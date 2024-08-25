@@ -2,7 +2,8 @@ import gleam/uri
 import releam/changelog.{type Changelog}
 import releam/package_config.{type PackageConfig, Github, Repository}
 
-pub fn generate_repository_provider_release_link(
+/// Generates the new release link for supported repository hosts
+pub fn generate_repository_host_release_link(
   package_config: PackageConfig,
   new_changelog: Changelog,
 ) {

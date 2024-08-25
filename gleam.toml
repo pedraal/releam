@@ -16,4 +16,4 @@ gleamsver = ">= 1.0.1 and < 2.0.0"
 gleeunit = ">= 1.0.0 and < 2.0.0"
 
 [releam]
-auto_push = false
+auto_push = true
