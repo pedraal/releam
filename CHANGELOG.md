@@ -2,6 +2,22 @@
 
 <!-- RELEAM TAG: DON'T DELETE -->
 
+## v0.2.1
+
+[compare changes](https://github.com/pedraal/releam/compare/v0.2.0...v0.2.1)
+
+### 📔 Documentation
+
+- Fill readme and add comments where needed
+
+### 🧹 Chore
+
+- Bump deps
+
+### 🎨 Styles
+
+- Various renaming and unpublish some functions
+
 ## v0.2.0
 
 [compare changes](https://github.com/pedraal/releam/compare/v0.1.0...v0.2.0)
